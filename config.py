@@ -1,4 +1,4 @@
-BOT_TOKEN    = "YOUR_BOT_TOKEN_HERE"
+BOT_TOKEN    = "8796024744:AAHgqewn8vc4JieUw9Zl9Bx7BdSWmA6ZM5Q"
 ADMIN_ID     = 123456789
 MINI_APP_URL = "https://family-burger-app.vercel.app"
 JSONBIN_ID   = "69d77d55aaba882197dd1746"
