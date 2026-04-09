@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Family Burger</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--green:#2A4D12;--green2:#1e3a0d;--gold:#F5A623;--orange:#FF6B00;--bg:#111410;--bg2:#181c13;--card:#1e2419;--card2:#242b1c;--border:rgba(255,255,255,0.07);--text:#f0f0e8;--muted:#7a8070;--r:14px}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow-x:hidden}
+.close-btn{position:fixed;top:12px;right:14px;z-index:9999;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.15);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.header{background:var(--green2);padding:52px 18px 0;position:sticky;top:0;z-index:100}
+.hrow{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.logo{width:46px;height:46px;border-radius:50%;border:2px solid var(--gold);overflow:hidden;flex-shrink:0;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:22px}
+.htitle{flex:1}
+.htitle h1{font-size:17px;font-weight:700;color:#fff;letter-spacing:.3px}
+.htitle p{font-size:11px;color:rgba(255,255,255,.55);margin-top:2px}
+.cart-fab{position:relative;background:var(--gold);border:none;border-radius:12px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:20px}
+.cart-badge{position:absolute;top:-6px;right:-6px;background:var(--orange);color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:none;align-items:center;justify-content:center;padding:0 4px}
+.tabs{display:flex;border-bottom:1px solid var(--border)}
+.tab{flex:1;background:transparent;border:none;color:var(--muted);font-size:12px;font-weight:500;padding:10px 4px 11px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;border-bottom:2px solid transparent;transition:all .2s}
+.tab-ico{font-size:18px}
+.tab.on{color:var(--gold);border-bottom-color:var(--gold)}
+.page{display:none;padding:20px 16px 100px;animation:up .2s ease}
+.page.on{display:block}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.cat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:4px}
+.cat-card{background:var(--card);border-radius:var(--r);padding:16px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;border:1.5px solid transparent;transition:all .2s}
+.cat-card:active{transform:scale(.97)}
+.cat-card.on{border-color:var(--gold);background:var(--card2)}
+.cat-icon{width:52px;height:52px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:26px}
+.cat-card.on .cat-icon{background:rgba(245,166,35,.18)}
+.cat-name{font-size:12px;font-weight:600;color:var(--text);text-align:center}
+.sec-title{font-size:15px;font-weight:700;color:var(--text);margin:18px 0 12px}
+.prod-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.prod-card{background:var(--card);border-radius:var(--r);overflow:hidden;cursor:pointer;border:1px solid var(--border);transition:transform .15s}
+.prod-card:active{transform:scale(.97)}
+.prod-thumb{width:100%;aspect-ratio:1;background:var(--green2);display:flex;align-items:center;justify-content:center;font-size:52px;position:relative;overflow:hidden}
+.prod-thumb img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.prod-body{padding:10px}
+.prod-name{font-size:13px;font-weight:600;margin-bottom:6px;line-height:1.3;color:var(--text)}
+.prod-row{display:flex;align-items:center;justify-content:space-between}
+.prod-price{font-size:13px;font-weight:700;color:var(--gold)}
+.plus-btn{background:var(--green);border:none;border-radius:8px;width:28px;height:28px;color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1}
+.screen{display:none;position:fixed;inset:0;background:var(--bg);z-index:300;overflow-y:auto;animation:slideup .25s ease}
+.screen.on{display:block}
+@keyframes slideup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.scr-close{position:absolute;top:14px;right:14px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.12);border-radius:50%;width:36px;height:36px;color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10}
+.scr-back{position:absolute;top:14px;left:14px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.12);border-radius:50%;width:36px;height:36px;color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10}
+.detail-hero{width:100%;aspect-ratio:4/3;background:var(--green2);display:flex;align-items:center;justify-content:center;font-size:90px;position:relative;overflow:hidden}
+.detail-hero img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.detail-body{padding:20px}
+.detail-name{font-size:22px;font-weight:700;margin-bottom:8px}
+.detail-desc{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:18px}
+.detail-price{font-size:26px;font-weight:700;color:var(--gold);margin-bottom:22px}
+.qty-row{display:flex;align-items:center;gap:18px;margin-bottom:22px}
+.qty-btn{background:var(--card2);border:1px solid var(--border);border-radius:10px;width:44px;height:44px;color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.qty-n{font-size:20px;font-weight:700;min-width:28px;text-align:center}
+.big-btn{width:100%;background:var(--gold);border:none;border-radius:var(--r);color:#111;font-size:16px;font-weight:700;padding:16px;cursor:pointer;letter-spacing:.3px}
+.big-btn:active{opacity:.85}
+.big-btn.orange{background:var(--orange);color:#fff}
+.big-btn.green{background:var(--green);color:#fff}
+.cart-items{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.ci{background:var(--card);border-radius:var(--r);padding:12px;display:flex;gap:12px;align-items:center}
+.ci-img{width:58px;height:58px;border-radius:10px;background:var(--green2);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;overflow:hidden}
+.ci-img img{width:100%;height:100%;object-fit:cover}
+.ci-info{flex:1;min-width:0}
+.ci-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ci-price{font-size:13px;color:var(--gold);font-weight:600;margin-top:3px}
+.ci-qty{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.cq-btn{background:var(--card2);border:none;border-radius:7px;width:30px;height:30px;color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.cq-n{font-size:14px;font-weight:700;min-width:18px;text-align:center}
+.total-row{background:var(--card);border-radius:var(--r);padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.total-lbl{font-size:14px;color:var(--muted)}
+.total-val{font-size:20px;font-weight:700;color:var(--gold)}
+.empty-box{text-align:center;padding:60px 20px}
+.empty-ico{font-size:60px;margin-bottom:14px}
+.empty-txt{font-size:15px;color:var(--muted)}
+.form-title{font-size:17px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.fb{background:var(--card);border:none;border-radius:10px;width:36px;height:36px;color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.fg{margin-bottom:14px}
+.fl{font-size:11px;color:var(--muted);margin-bottom:7px;display:block;letter-spacing:.5px;text-transform:uppercase}
+.fi{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:11px;color:var(--text);font-size:15px;padding:13px 15px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.fi:focus{border-color:var(--gold)}
+.success-box{text-align:center;padding:60px 20px}
+.sico{font-size:72px;margin-bottom:20px}
+.stitle{font-size:22px;font-weight:700;color:var(--gold);margin-bottom:10px}
+.stxt{font-size:14px;color:var(--muted);line-height:1.7}
+.order-card{background:var(--card);border-radius:var(--r);padding:14px;margin-bottom:12px;border:1px solid var(--border)}
+.oh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.oid{font-size:13px;font-weight:700}
+.odate{font-size:11px;color:var(--muted);margin-top:2px}
+.ostatus{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;background:rgba(245,166,35,.12);color:var(--gold)}
+.oitem{font-size:13px;color:var(--muted);padding:2px 0}
+.ototal{font-size:14px;font-weight:700;color:var(--gold);margin-top:8px}
+.clink{background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;border:1px solid var(--border);text-decoration:none;transition:background .15s}
+.clink:active{background:var(--card2)}
+.cico{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.cico.ph{background:rgba(245,166,35,.15)}
+.cico.ig{background:rgba(255,60,172,.15)}
+.cico.tg{background:rgba(55,138,221,.15)}
+.clbl h3{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
+.clbl p{font-size:13px;color:var(--muted)}
+.carr{margin-left:auto;color:var(--muted);font-size:20px;line-height:1}
+.scr-pad{padding:20px 16px 100px}
+</style>
+</head>
+<body>
+
+<button class="close-btn" onclick="tg.close()">✕</button>
+
+<div class="header">
+  <div class="hrow">
+    <div class="logo">🍔</div>
+    <div class="htitle">
+      <h1>Family Burger</h1>
+      <p>Tez va mazali yetkazib berish</p>
+    </div>
+    <button class="cart-fab" onclick="openCart()">
+      🛒
+      <span class="cart-badge" id="cartBadge">0</span>
+    </button>
+  </div>
+  <div class="tabs">
+    <button class="tab on" onclick="nav('catalog',this)"><span class="tab-ico">🍔</span>Catalog</button>
+    <button class="tab" onclick="nav('orders',this)"><span class="tab-ico">📦</span>My Orders</button>
+    <button class="tab" onclick="nav('contact',this)"><span class="tab-ico">📞</span>Contact</button>
+  </div>
+</div>
+
+<div class="page on" id="page-catalog">
+  <div class="cat-grid">
+    <div class="cat-card on" onclick="selectCat('Burgerlar',this)">
+      <div class="cat-icon">🍔</div>
+      <div class="cat-name">Burgerlar</div>
+    </div>
+    <div class="cat-card" onclick="selectCat('Ichimliklar',this)">
+      <div class="cat-icon">🥤</div>
+      <div class="cat-name">Ichimliklar</div>
+    </div>
+    <div class="cat-card" onclick="selectCat('Shirinliklar',this)">
+      <div class="cat-icon">🍰</div>
+      <div class="cat-name">Shirinliklar</div>
+    </div>
+  </div>
+  <div class="sec-title" id="catTitle">Burgerlar</div>
+  <div class="prod-grid" id="prodGrid"></div>
+</div>
+
+<div class="page" id="page-orders">
+  <div class="sec-title">Mening buyurtmalarim</div>
+  <div id="ordersList"></div>
+</div>
+
+<div class="page" id="page-contact">
+  <div class="sec-title">Biz bilan bogʻlaning</div>
+  <a class="clink" href="tel:+998901234567">
+    <div class="cico ph">📞</div>
+    <div class="clbl"><h3>Telefon</h3><p>+998 90 123 45 67</p></div>
+    <span class="carr">›</span>
+  </a>
+  <a class="clink" href="https://instagram.com/familyburger_uz" target="_blank">
+    <div class="cico ig">📸</div>
+    <div class="clbl"><h3>Instagram</h3><p>@familyburger_uz</p></div>
+    <span class="carr">›</span>
+  </a>
+  <a class="clink" href="https://t.me/familyburger_uz" target="_blank">
+    <div class="cico tg">✈️</div>
+    <div class="clbl"><h3>Telegram</h3><p>@familyburger_uz</p></div>
+    <span class="carr">›</span>
+  </a>
+</div>
+
+<div class="screen" id="scrDetail">
+  <button class="scr-close" onclick="closeScr('scrDetail')">✕</button>
+  <div class="detail-hero" id="dHero"></div>
+  <div class="detail-body">
+    <div class="detail-name" id="dName"></div>
+    <div class="detail-desc" id="dDesc"></div>
+    <div class="detail-price" id="dPrice"></div>
+    <div class="qty-row">
+      <button class="qty-btn" onclick="dq(-1)">−</button>
+      <span class="qty-n" id="dQty">1</span>
+      <button class="qty-btn" onclick="dq(1)">+</button>
+    </div>
+    <button class="big-btn" onclick="addFromDetail()">🛒 Savatchaga qoʻshish</button>
+  </div>
+</div>
+
+<div class="screen" id="scrCart">
+  <div class="scr-pad">
+    <div class="form-title">
+      <button class="fb" onclick="closeScr('scrCart')">‹</button>
+      Savatcha
+    </div>
+    <div id="cartBody"></div>
+  </div>
+</div>
+
+<div class="screen" id="scrCheckout">
+  <div class="scr-pad">
+    <div class="form-title">
+      <button class="fb" onclick="closeScr('scrCheckout')">‹</button>
+      Buyurtma berish
+    </div>
+    <div class="fg"><label class="fl">Ismingiz</label><input class="fi" id="iName" type="text" placeholder="Toʻliq ismingiz"></div>
+    <div class="fg"><label class="fl">Telefon</label><input class="fi" id="iPhone" type="tel" placeholder="+998 90 000 00 00"></div>
+    <div class="fg"><label class="fl">Manzil</label><input class="fi" id="iAddr" type="text" placeholder="Koʻcha, uy raqami"></div>
+    <button class="big-btn orange" style="margin-top:8px" onclick="submitOrder()">✅ Buyurtmani tasdiqlash</button>
+  </div>
+</div>
+
+<div class="screen" id="scrSuccess">
+  <div class="success-box">
+    <div class="sico">🎉</div>
+    <div class="stitle">Buyurtma qabul qilindi!</div>
+    <div class="stxt">Tez orada siz bilan bogʻlanamiz va buyurtmangizni yetkazib beramiz 🚀</div>
+    <button class="big-btn" style="margin-top:32px" onclick="goHome()">🍔 Bosh sahifaga qaytish</button>
+  </div>
+</div>
+
+<script>
+const tg = window.Telegram.WebApp;
+tg.ready();
+tg.expand();
+
+const JSONBIN_ID  = "69d77d55aaba882197dd1746";
+const JSONBIN_KEY = "$2a$10$nRkSTdJDfYyxIy84qlZOEufkHuxqWdmACat3IUXajUiHIFf8Uo1Eu";
+let PRODUCTS = [];
+let cart = JSON.parse(localStorage.getItem('fb_cart') || '{}');
+let orders = JSON.parse(localStorage.getItem('fb_orders') || '[]');
+let curCat = 'Burgerlar';
+let curProd = null;
+let curQty = 1;
+
+function save(){
+  localStorage.setItem('fb_cart', JSON.stringify(cart));
+  localStorage.setItem('fb_orders', JSON.stringify(orders));
+}
+
+function nav(name, btn){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+  document.getElementById('page-' + name).classList.add('on');
+  btn.classList.add('on');
+  if(name === 'orders') renderOrders();
+}
+
+function selectCat(cat, el){
+  curCat = cat;
+  document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('catTitle').textContent = cat;
+  renderProds();
+}
+
+function renderProds(){
+  const list = PRODUCTS.filter(p => p.cat === curCat);
+  document.getElementById('prodGrid').innerHTML = list.map(p => `
+    <div class="prod-card" onclick="openDetail(${p.id})">
+      <div class="prod-thumb">
+        ${p.img ? '<img src="'+p.img+'" alt="'+p.name+'" onerror="this.style.display=\'none\'">' : ''}
+        <span style="position:relative;z-index:1">${p.em}</span>
+      </div>
+      <div class="prod-body">
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-row">
+          <span class="prod-price">${p.price.toLocaleString()} som</span>
+          <button class="plus-btn" onclick="event.stopPropagation();quickAdd(${p.id})">+</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function openDetail(id){
+  const p = PRODUCTS.find(x => x.id === id);
+  curProd = p; curQty = 1;
+  document.getElementById('dHero').innerHTML = (p.img ? '<img src="'+p.img+'" onerror="this.style.display=\'none\'">' : '') + '<span style="position:relative;z-index:1">' + p.em + '</span>';
+  document.getElementById('dName').textContent = p.name;
+  document.getElementById('dDesc').textContent = p.desc;
+  document.getElementById('dPrice').textContent = p.price.toLocaleString() + " so'm";
+  document.getElementById('dQty').textContent = 1;
+  document.getElementById('scrDetail').classList.add('on');
+}
+
+function closeScr(id){ document.getElementById(id).classList.remove('on'); }
+
+function dq(d){ curQty = Math.max(1, curQty + d); document.getElementById('dQty').textContent = curQty; }
+
+function addFromDetail(){
+  if(!curProd) return;
+  const k = String(curProd.id);
+  if(cart[k]) cart[k].qty += curQty;
+  else cart[k] = {name:curProd.name, price:curProd.price, em:curProd.em, img:curProd.img||null, qty:curQty};
+  save(); updateBadge(); closeScr('scrDetail');
+  tg.HapticFeedback && tg.HapticFeedback.impactOccurred('light');
+}
+
+function quickAdd(id){
+  const p = PRODUCTS.find(x => x.id === id);
+  const k = String(id);
+  if(cart[k]) cart[k].qty++;
+  else cart[k] = {name:p.name, price:p.price, em:p.em, img:p.img||null, qty:1};
+  save(); updateBadge();
+  tg.HapticFeedback && tg.HapticFeedback.impactOccurred('light');
+}
+
+function updateBadge(){
+  const n = Object.values(cart).reduce((s,i) => s + i.qty, 0);
+  const el = document.getElementById('cartBadge');
+  if(n > 0){ el.style.display = 'flex'; el.textContent = n; }
+  else el.style.display = 'none';
+}
+
+function openCart(){ renderCart(); document.getElementById('scrCart').classList.add('on'); }
+
+function renderCart(){
+  const keys = Object.keys(cart);
+  const cb = document.getElementById('cartBody');
+  if(!keys.length){
+    cb.innerHTML = '<div class="empty-box"><div class="empty-ico">🛒</div><div class="empty-txt">Savatchangiz bosh</div></div>';
+    return;
+  }
+  const total = keys.reduce((s,k) => s + cart[k].price * cart[k].qty, 0);
+  cb.innerHTML = '<div class="cart-items">' +
+    keys.map(k => '<div class="ci"><div class="ci-img">' +
+      (cart[k].img ? '<img src="'+cart[k].img+'" onerror="this.style.display=\'none\'">' : '') +
+      cart[k].em + '</div><div class="ci-info"><div class="ci-name">' + cart[k].name +
+      '</div><div class="ci-price">' + (cart[k].price * cart[k].qty).toLocaleString() + " so'm" +
+      '</div></div><div class="ci-qty"><button class="cq-btn" onclick="cqty(\''+k+'\',-1)">−</button><span class="cq-n">' +
+      cart[k].qty + '</span><button class="cq-btn" onclick="cqty(\''+k+'\',1)">+</button></div></div>').join('') +
+    '</div><div class="total-row"><span class="total-lbl">Jami:</span><span class="total-val">' +
+    total.toLocaleString() + " so'm</span></div>" +
+    '<button class="big-btn" onclick="openCheckout()">Buyurtma berish →</button>';
+}
+
+function cqty(k, d){
+  cart[k].qty += d;
+  if(cart[k].qty <= 0) delete cart[k];
+  save(); updateBadge(); renderCart();
+}
+
+function openCheckout(){ document.getElementById('scrCheckout').classList.add('on'); }
+
+async function submitOrder(){
+  const name = document.getElementById('iName').value.trim();
+  const phone = document.getElementById('iPhone').value.trim();
+  const addr = document.getElementById('iAddr').value.trim();
+  if(!name || !phone || !addr){ alert("Iltimos, barcha maydonlarni toldiring!"); return; }
+
+  const total = Object.values(cart).reduce((s,i) => s + i.price * i.qty, 0);
+  const itemsText = Object.values(cart).map(i => "  • " + i.em + " " + i.name + " x" + i.qty + " = " + (i.price*i.qty).toLocaleString() + " som").join("\n");
+
+  const BOT_TOKEN = "8796024744:AAHgqewn8vc4JieUw9Zl9Bx7BdSWmA6ZM5Q";
+  const ADMIN_ID = "8321214528";
+
+  const msg = "🔔 YANGI BUYURTMA!\n\n" +
+    "👤 Ism: " + name + "\n" +
+    "📞 Tel: " + phone + "\n" +
+    "🏠 Manzil: " + addr + "\n\n" +
+    "🛒 Mahsulotlar:\n" + itemsText + "\n\n" +
+    "💰 Jami: " + total.toLocaleString() + " som";
+
+  try{
+    await fetch("https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({chat_id: ADMIN_ID, text: msg})
+    });
+  } catch(e){ console.log("Xabar yuborishda xato:", e); }
+
+  const order = {id:Date.now(), date:new Date().toLocaleDateString('uz'), items:{...cart}, total, status:'Qabul qilindi'};
+  orders.unshift(order);
+  cart = {}; save(); updateBadge();
+  closeScr('scrCheckout'); closeScr('scrCart');
+  document.getElementById('scrSuccess').classList.add('on');
+}
+
+function goHome(){
+  closeScr('scrSuccess');
+  nav('catalog', document.querySelector('.tab'));
+}
+
+function renderOrders(){
+  const el = document.getElementById('ordersList');
+  if(!orders.length){
+    el.innerHTML = '<div class="empty-box"><div class="empty-ico">📦</div><div class="empty-txt">Hali buyurtma yoq</div></div>';
+    return;
+  }
+  el.innerHTML = orders.map(o =>
+    '<div class="order-card"><div class="oh"><div><div class="oid">Buyurtma #' + String(o.id).slice(-4) +
+    '</div><div class="odate">' + o.date + '</div></div><div class="ostatus">' + o.status + '</div></div>' +
+    Object.values(o.items).map(i => '<div class="oitem">' + i.em + ' ' + i.name + ' x' + i.qty + '</div>').join('') +
+    '<div class="ototal">Jami: ' + o.total.toLocaleString() + " so'm</div></div>").join('');
+}
+
+async function loadProducts(){
+  document.getElementById('prodGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)">Yuklanmoqda...</div>';
+  try {
+    const r = await fetch("https://api.jsonbin.io/v3/b/" + JSONBIN_ID + "/latest", {
+      headers: {"X-Master-Key": JSONBIN_KEY, "X-Bin-Meta": "false"}
+    });
+    const data = await r.json();
+    PRODUCTS = data.products || [];
+    renderProds();
+  } catch(e){
+    document.getElementById('prodGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)">Yuklab bolmadi</div>';
+  }
+}
+
+loadProducts();
+updateBadge();
+</script>
+</body>
+</html>
